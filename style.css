@@ -106,16 +106,18 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
     padding: 45px 10px 10px 10px; /* Reduced top padding */
   }
   #tray-area {
-    height: 140px; flex-shrink: 0; /* Slightly smaller tray */
-
-    flex-direction: row;
+    height: 190px; flex-shrink: 0; /* Tall enough for pieces */
+    flex-direction: column;
     border-top: 1px solid var(--bdr);
   }
+
   #tray {
     flex-wrap: nowrap;
     overflow-x: auto; overflow-y: hidden;
+    padding: 15px 12px; /* Extra padding for shadows */
     -webkit-overflow-scrolling: touch;
   }
+
 }
 
 /* ── Board area ── */
@@ -173,7 +175,8 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
 }
 
 /* Board canvas */
-#board-cv { display: block; }
+#board-cv { display: block; image-rendering: -webkit-optimize-contrast; }
+
 
 /* Slots layer */
 #slots { position: absolute; inset: 0; }
@@ -224,7 +227,9 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
 .piece canvas {
   filter: drop-shadow(2px 6px 12px rgba(0,0,0,0.6));
   pointer-events: none;
+  image-rendering: -webkit-optimize-contrast; /* Sharpness fix */
 }
+
 .piece:hover, .piece:active {
   transform: scale(1.15) translateY(-6px);
   z-index: 99; position: relative;
