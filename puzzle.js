@@ -134,11 +134,14 @@ function drawPaw(ctx, x, y, size, rotation) {
 }
 
 function buildCatEars(frameEl, fw, fh) {
-  const wrap = document.getElementById('board-wrap');
+  const wrap = document.getElementById('board-wrap'); 
   wrap.querySelectorAll('.ear, .paw-canvas').forEach(e => e.remove());
 
   const earW = Math.round(fw * 0.21), earH = Math.round(fw * 0.14);
+
+
   const xOff = Math.round(fw * .12);
+
 
   function mkEar(left) {
     const wrap2 = document.createElement('div');
@@ -192,6 +195,7 @@ function buildCatEars(frameEl, fw, fh) {
   wrap.appendChild(mkEar(false));
   wrap.appendChild(pcv);
 }
+
 
 // ════════════════════════════════════════════════════════════════
 // CLASE PRINCIPAL DEL PUZZLE
@@ -259,6 +263,7 @@ class CatPuzzle {
 
     buildCatEars(frame, fw, fh);
 
+
     // Board canvas positioned inside frame - HD SUPPORT
     const cv = document.getElementById('board-cv');
     const dpr = window.devicePixelRatio || 1;
@@ -300,9 +305,10 @@ class CatPuzzle {
       ctx.bezierCurveTo(x-s*8, y+s, x-s*4, y-s*2, x, y+s*2.5);
       ctx.fill();
     }
-    // grid lines - Thicker and more visible for HD
-    ctx.strokeStyle = 'rgba(100,50,30,0.18)'; 
-    ctx.lineWidth = dpr > 1 ? 1.4 : 1.0;
+    // grid lines - Ultra-sharp and slightly bolder for HD
+    ctx.strokeStyle = 'rgba(100,50,30,0.22)'; 
+    ctx.lineWidth = dpr > 1 ? 1.6 : 1.2;
+
     for (let c = 0; c <= this.cols; c++) { ctx.beginPath(); ctx.moveTo(c*this.pw,0); ctx.lineTo(c*this.pw,this.bh); ctx.stroke(); }
     for (let r = 0; r <= this.rows; r++) { ctx.beginPath(); ctx.moveTo(0,r*this.ph); ctx.lineTo(this.bw,r*this.ph); ctx.stroke(); }
   }
@@ -665,6 +671,7 @@ class CatPuzzle {
       font-weight: bold; font-size: 1.4rem; text-shadow: 0 2px 10px rgba(255,107,157,0.8);
       animation: wordPopup 1.2s ease-out forwards;
     `;
+
     document.body.appendChild(word);
     setTimeout(() => word.remove(), 1300);
   }
