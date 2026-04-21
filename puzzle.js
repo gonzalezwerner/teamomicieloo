@@ -134,7 +134,8 @@ function drawPaw(ctx, x, y, size, rotation) {
 }
 
 function buildCatEars(frameEl, fw, fh) {
-  const wrap = document.getElementById('board-wrap'); 
+  const wrap = document.getElementById('board-wrap');
+  if (!wrap) return;
   wrap.querySelectorAll('.ear, .paw-canvas').forEach(e => e.remove());
 
   const earW = Math.round(fw * 0.21), earH = Math.round(fw * 0.14);
@@ -177,17 +178,19 @@ function buildCatEars(frameEl, fw, fh) {
   pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   pctx.imageSmoothingQuality = 'high';
 
+  // Adjusted coordinates for better center-relative positioning
   const psz = fw * 0.08, pdist = fw * 0.44;
   const mcx = pw_ / 2, mcy = ph_ / 2;
   
-  // Bottom paws
-  drawPaw(pctx, mcx - pdist, mcy + fh * 0.4, psz, -0.4);
-  drawPaw(pctx, mcx + pdist, mcy + fh * 0.4, psz, 0.4);
+  // Bottom paws - anchored to board radius
+  drawPaw(pctx, mcx - pdist, mcy + fh/2 - psz*0.2, psz, -0.4);
+  drawPaw(pctx, mcx + pdist, mcy + fh/2 - psz*0.2, psz, 0.4);
   // Top paws
-  drawPaw(pctx, mcx - pdist * 0.9, mcy - fh * 0.4, psz * 0.8, -0.1);
-  drawPaw(pctx, mcx + pdist * 0.9, mcy - fh * 0.4, psz * 0.8, 0.1);
+  drawPaw(pctx, mcx - pdist * 0.85, mcy - fh/2 + psz*0.2, psz * 0.82, -0.1);
+  drawPaw(pctx, mcx + pdist * 0.85, mcy - fh/2 + psz*0.2, psz * 0.82, 0.1);
 
-  pcv.style.cssText = `position:absolute;left:-80px;top:-80px;pointer-events:none;z-index:25;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));`;
+  pcv.style.cssText = `position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none;z-index:25;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));`;
+
 
 
   
