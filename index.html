@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+  <title>💕 Gatitos Enamorados</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Nunito:wght@600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+
+  <!-- Header -->
+  <header id="hdr">
+    <div class="hdr-left">
+      <span class="logo">🐱</span>
+      <div>
+        <h1>Gatitos Enamorados</h1>
+        <p class="sub">Un puzzle de amor para ti 💕</p>
+      </div>
+    </div>
+    <div class="hdr-stats">
+      <div class="stat"><span id="s-placed">0</span><em>Colocadas</em></div>
+      <div class="stat-sep">/</div>
+      <div class="stat"><span id="s-total">—</span><em>Total</em></div>
+      <div class="stat"><span id="s-time">0:00</span><em>Tiempo</em></div>
+      <div class="stat hint-stat"><span id="hints-left">3</span><em>Pistas 💡</em></div>
+    </div>
+    <div class="hdr-btns">
+      <button class="hbtn" id="btn-shuffle" title="Mezclar">🔀</button>
+      <button class="hbtn" id="btn-hint"    title="Pista (3 máx)">💡</button>
+      <button class="hbtn" id="btn-reset"   title="Reiniciar">🔄</button>
+      <button class="hbtn" id="btn-info"    title="Instrucciones">❓</button>
+    </div>
+  </header>
+
+  <!-- Game area -->
+  <main id="game">
+
+    <!-- Board -->
+    <section id="board-area">
+      <div id="board-wrap">
+        <!-- Orejas creadas por JS -->
+        <div id="cat-frame">
+          <canvas id="board-cv"></canvas>
+          <div id="slots"></div>
+        </div>
+        <div id="frm-shadow"></div>
+      </div>
+      <!-- Progress bar -->
+      <div id="progress-track"><div id="progress-bar"></div></div>
+    </section>
+
+    <!-- Piece tray -->
+    <aside id="tray-area">
+      <div id="tray-hdr">
+        <span>🧩 Piezas</span>
+        <span id="tray-sub"></span>
+      </div>
+      <div id="tray"></div>
+    </aside>
+
+  </main>
+
+  <!-- Victory screen -->
+  <div id="victory" class="hidden">
+    <canvas id="vic-cv"></canvas>
+    <div id="vic-box">
+      <div class="vic-hearts">💕🐱🌹🐱💕</div>
+      <h2>¡Lo lograste, mi amor!</h2>
+      <p>Igual que estas piezas,<br>tú y yo encajamos perfectamente 💕</p>
+      <div class="vic-stats">
+        <div><strong id="v-time">—</strong><em>Tiempo</em></div>
+        <div class="vs-heart">💕</div>
+        <div><strong id="v-pcs">—</strong><em>Piezas</em></div>
+      </div>
+      <button id="btn-again">🔄 Jugar de nuevo</button>
+    </div>
+  </div>
+
+  <!-- Instructions Modal -->
+  <div id="modal-instructions" class="hidden">
+    <div id="modal-box">
+      <div class="modal-emoji">🐱💕🧩</div>
+      <h2>¿Cómo jugar?</h2>
+
+      <div class="modal-steps">
+        <div class="mstep">
+          <span class="micon">👁️</span>
+          <div>
+            <strong>Observa</strong>
+            <p>En la bandeja de la derecha (o abajo en móvil) están todos los gatitos mezclados.</p>
+          </div>
+        </div>
+        <div class="mstep">
+          <span class="micon">✋</span>
+          <div>
+            <strong>Arrastra</strong>
+            <p>Arrastra cada gatito al tablero y suéltalo cerca de su posición correcta para que encaje.</p>
+          </div>
+        </div>
+        <div class="mstep">
+          <span class="micon">💡</span>
+          <div>
+            <strong>Pistas (solo 3)</strong>
+            <p>El botón <b>💡</b> resalta un gatito y su casilla. ¡Úsalo con sabiduría — solo tienes 3!</p>
+          </div>
+        </div>
+        <div class="mstep">
+          <span class="micon">🔀</span>
+          <div>
+            <strong>Mezcla</strong>
+            <p>¿Perdiste el hilo? El botón <b>🔀</b> reorganiza la bandeja aleatoriamente.</p>
+          </div>
+        </div>
+        <div class="mstep">
+          <span class="micon">🎯</span>
+          <div>
+            <strong>Dificultad</strong>
+            <p>144 gatitos, cada uno una pieza única. El encaje requiere precisión. ¡Tú puedes! 💪</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="modal-tip">💾 Tu progreso se guarda automáticamente</p>
+      <button id="btn-modal-close">¡Entendido, a jugar! 🐱</button>
+    </div>
+  </div>
+
+  <script src="puzzle.js"></script>
+</body>
+</html>
