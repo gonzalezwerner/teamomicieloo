@@ -162,11 +162,11 @@ function buildCatEars(frameEl, fw, fh) {
   }
 
 
-  // Draw 4 paws
+  // Draw 4 paws - Optimized for HD and visibility
   const pcv = document.createElement('canvas');
   pcv.className = 'paw-canvas';
   const dpr = window.devicePixelRatio || 1;
-  const pw_ = fw + 100, ph_ = fh + 100;
+  const pw_ = fw + 160, ph_ = fh + 160; 
   pcv.width = pw_ * dpr; pcv.height = ph_ * dpr;
   pcv.style.width = pw_ + 'px'; pcv.style.height = ph_ + 'px';
 
@@ -174,12 +174,18 @@ function buildCatEars(frameEl, fw, fh) {
   pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   pctx.imageSmoothingQuality = 'high';
 
-  const psz = fw * 0.07, pdist = fw * 0.44;
-  drawPaw(pctx, 50 + fw/2 - pdist, 50 + fh * 0.82, psz, -0.4);
-  drawPaw(pctx, 50 + fw/2 + pdist, 50 + fh * 0.82, psz, 0.4);
-  drawPaw(pctx, 50 + fw/2 - pdist * 0.95, 50 + fh * 0.18, psz * 0.85, -0.1);
-  drawPaw(pctx, 50 + fw/2 + pdist * 0.95, 50 + fh * 0.18, psz * 0.85, 0.1);
-  pcv.style.cssText = `position:absolute;left:-50px;top:-50px;pointer-events:none;z-index:25;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));`;
+  const psz = fw * 0.08, pdist = fw * 0.44;
+  const mcx = pw_ / 2, mcy = ph_ / 2;
+  
+  // Bottom paws
+  drawPaw(pctx, mcx - pdist, mcy + fh * 0.4, psz, -0.4);
+  drawPaw(pctx, mcx + pdist, mcy + fh * 0.4, psz, 0.4);
+  // Top paws
+  drawPaw(pctx, mcx - pdist * 0.9, mcy - fh * 0.4, psz * 0.8, -0.1);
+  drawPaw(pctx, mcx + pdist * 0.9, mcy - fh * 0.4, psz * 0.8, 0.1);
+
+  pcv.style.cssText = `position:absolute;left:-80px;top:-80px;pointer-events:none;z-index:25;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.5));`;
+
 
   
   wrap.appendChild(mkEar(true));
@@ -294,11 +300,14 @@ class CatPuzzle {
       ctx.bezierCurveTo(x-s*8, y+s, x-s*4, y-s*2, x, y+s*2.5);
       ctx.fill();
     }
-    // grid lines
-    ctx.strokeStyle = 'rgba(100,50,30,.1)'; ctx.lineWidth = .6;
+    // grid lines - Thicker and more visible for HD
+    ctx.strokeStyle = 'rgba(100,50,30,0.18)'; 
+    ctx.lineWidth = dpr > 1 ? 1.4 : 1.0;
     for (let c = 0; c <= this.cols; c++) { ctx.beginPath(); ctx.moveTo(c*this.pw,0); ctx.lineTo(c*this.pw,this.bh); ctx.stroke(); }
     for (let r = 0; r <= this.rows; r++) { ctx.beginPath(); ctx.moveTo(0,r*this.ph); ctx.lineTo(this.bw,r*this.ph); ctx.stroke(); }
   }
+
+
 
   // ── Load source image ────────────────────────────────────────
   _loadImage() {
@@ -311,9 +320,18 @@ class CatPuzzle {
       this._createPieces();
       this._renderTray();
       this._bindEvents();
-      this._startTimer();
       this._loadSave();
+      // HD Verification
+      console.log("%c PUZZLE HD LOADED v5.2 %c", "background:#ff6b9d;color:#fff;font-weight:bold;padding:4px", "");
+      setTimeout(() => {
+        const d = document.createElement('div');
+        d.style.cssText = 'position:fixed;top:10px;left:50%;transform:translateX(-50%);background:rgba(255,107,157,0.9);color:white;padding:5px 15px;border-radius:20px;font-size:12px;z-index:999999;pointer-events:none;';
+        d.textContent = 'Modo HD Activado 🐱✨';
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 4000);
+      }, 500);
     };
+
     this._srcImg.onerror = () => {
       console.error('Error loading image');
       document.getElementById('s-total').textContent = '⚠️';
