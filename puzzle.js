@@ -534,7 +534,13 @@ class CatPuzzle {
     document.getElementById('btn-reset').onclick   = () => this._reset();
     document.getElementById('btn-again')?.addEventListener('click', () => this._reset());
     document.getElementById('btn-info')?.addEventListener('click', () => this._openModal());
+
+    // Tray navigation arrows
+    const tray = document.getElementById('tray');
+    document.getElementById('tray-prev').onclick = () => tray.scrollBy({ left: -240, behavior: 'smooth' });
+    document.getElementById('tray-next').onclick = () => tray.scrollBy({ left: 240, behavior: 'smooth' });
   }
+
 
   _dn(e) {
     const el = e.target.closest('.piece'); if (!el) return;
