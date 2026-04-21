@@ -62,7 +62,9 @@ class RomanticBg {
     const dpr = window.devicePixelRatio || 1;
     this.cv.width  = window.innerWidth * dpr;
     this.cv.height = window.innerHeight * dpr;
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // MUST scale the context
   }
+
 
   _spawn(n) {
     const COLS = ['#ff6b9d','#ff8fbe','#fce4ec','#f59e0b','#c084fc','#e879f9','#ffd6e7','#ff4081'];
@@ -142,8 +144,14 @@ function buildCatEars(frameEl, fw, fh) {
     const wrap2 = document.createElement('div');
     wrap2.className = 'ear';
     const cv = document.createElement('canvas');
-    cv.width = earW; cv.height = earH;
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = earW * dpr; cv.height = earH * dpr;
+    cv.style.width = earW + 'px'; cv.style.height = earH + 'px';
+
     const ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.imageSmoothingQuality = 'high';
+
     const g = ctx.createLinearGradient(earW/2, earH, earW/2, 0);
     g.addColorStop(0, '#a07030'); g.addColorStop(.45, '#e6c072'); g.addColorStop(1, '#f8e5b5');
     ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(0, earH); ctx.lineTo(earW/2, 0); ctx.lineTo(earW, earH); ctx.closePath(); ctx.fill();
@@ -153,16 +161,26 @@ function buildCatEars(frameEl, fw, fh) {
     return wrap2;
   }
 
+
   // Draw 4 paws
   const pcv = document.createElement('canvas');
-  pcv.className = 'paw-canvas'; pcv.width = fw + 100; pcv.height = fh + 100;
+  pcv.className = 'paw-canvas';
+  const dpr = window.devicePixelRatio || 1;
+  const pw_ = fw + 100, ph_ = fh + 100;
+  pcv.width = pw_ * dpr; pcv.height = ph_ * dpr;
+  pcv.style.width = pw_ + 'px'; pcv.style.height = ph_ + 'px';
+
   const pctx = pcv.getContext('2d');
+  pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  pctx.imageSmoothingQuality = 'high';
+
   const psz = fw * 0.07, pdist = fw * 0.44;
   drawPaw(pctx, 50 + fw/2 - pdist, 50 + fh * 0.82, psz, -0.4);
   drawPaw(pctx, 50 + fw/2 + pdist, 50 + fh * 0.82, psz, 0.4);
   drawPaw(pctx, 50 + fw/2 - pdist * 0.95, 50 + fh * 0.18, psz * 0.85, -0.1);
   drawPaw(pctx, 50 + fw/2 + pdist * 0.95, 50 + fh * 0.18, psz * 0.85, 0.1);
   pcv.style.cssText = `position:absolute;left:-50px;top:-50px;pointer-events:none;z-index:25;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.4));`;
+
   
   wrap.appendChild(mkEar(true));
   wrap.appendChild(mkEar(false));
@@ -242,8 +260,9 @@ class CatPuzzle {
     const sl = document.getElementById('slots');
     sl.style.cssText = `position:absolute;left:${pad}px;top:${pad}px;width:${this.bw}px;height:${this.bh}px;overflow:hidden;`;
 
-    // Dynamic tray size for mobile
-    this.traySz = isMobile ? Math.min(80, Math.floor(window.innerHeight * 0.09)) : CFG.TRAY_SZ;
+    // Dynamic tray size for mobile - more conservative to avoid clipping
+    this.traySz = isMobile ? Math.min(65, Math.floor(window.innerHeight * 0.08)) : CFG.TRAY_SZ;
+
 
     document.getElementById('s-total').textContent = this.total;
     document.getElementById('hints-left').textContent = this.hintsLeft;
@@ -375,6 +394,10 @@ class CatPuzzle {
     const iw = this._srcImg.naturalWidth, ih = this._srcImg.naturalHeight;
     const sw = iw / this.cols, sh = ih / this.rows;
     
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+
+    
     ctx.save();
     // Gutters for the stickers
     const m = Math.round(dw * 0.5);
@@ -452,8 +475,10 @@ class CatPuzzle {
       
       const ctx = cv.getContext('2d');
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.imageSmoothingQuality = 'high';
       
       this._blitPiece(ctx, p.col, p.row, g/2, g/2, tw, th, true);
+
 
       const wrap = document.createElement('div');
       wrap.className = 'piece'; wrap.dataset.pid = p.id;
