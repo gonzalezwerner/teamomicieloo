@@ -59,9 +59,11 @@ class RomanticBg {
     this._loop();
   }
   _resize() {
-    this.cv.width  = window.innerWidth;
-    this.cv.height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    this.cv.width  = window.innerWidth * dpr;
+    this.cv.height = window.innerHeight * dpr;
   }
+
   _spawn(n) {
     const COLS = ['#ff6b9d','#ff8fbe','#fce4ec','#f59e0b','#c084fc','#e879f9','#ffd6e7','#ff4081'];
     for (let i = 0; i < n; i++) this.pts.push({
@@ -203,11 +205,12 @@ class CatPuzzle {
     const area = document.getElementById('board-area');
     const aw = area.clientWidth;
     const ah = area.clientHeight;
+    const isMobile = window.innerWidth < 640 || window.innerHeight > window.innerWidth;
 
     // Subtract space for the larger cat tabs
-    const spaceForEars = ah * 0.18;
-    const aw2 = aw - 60;
-    const ah2 = ah - spaceForEars - 80; 
+    const spaceForEars = ah * (isMobile ? 0.12 : 0.18);
+    const aw2 = aw - (isMobile ? 20 : 60);
+    const ah2 = ah - spaceForEars - (isMobile ? 40 : 80); 
     
     const szX = aw2 / this.cols;
     const szY = ah2 / this.rows;
@@ -228,22 +231,31 @@ class CatPuzzle {
 
     buildCatEars(frame, fw, fh);
 
-    // Board canvas positioned inside frame
+    // Board canvas positioned inside frame - HD SUPPORT
     const cv = document.getElementById('board-cv');
-    cv.width  = this.bw; cv.height = this.bh;
+    const dpr = window.devicePixelRatio || 1;
+    cv.width  = this.bw * dpr; 
+    cv.height = this.bh * dpr;
     cv.style.cssText = `position:absolute;left:${pad}px;top:${pad}px;width:${this.bw}px;height:${this.bh}px;`;
 
     // Slots overlay (same position)
     const sl = document.getElementById('slots');
     sl.style.cssText = `position:absolute;left:${pad}px;top:${pad}px;width:${this.bw}px;height:${this.bh}px;overflow:hidden;`;
 
+    // Dynamic tray size for mobile
+    this.traySz = isMobile ? Math.min(80, Math.floor(window.innerHeight * 0.09)) : CFG.TRAY_SZ;
+
     document.getElementById('s-total').textContent = this.total;
     document.getElementById('hints-left').textContent = this.hintsLeft;
   }
 
+
   _drawEmptyBoard(cv) {
     const ctx = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // Scale for HD
     // Parchment background
+
     const g = ctx.createLinearGradient(0, 0, this.bw, this.bh);
     g.addColorStop(0, '#f0e2d0'); g.addColorStop(.5, '#ead8c2'); g.addColorStop(1, '#e4d2bb');
     ctx.fillStyle = g; ctx.fillRect(0, 0, this.bw, this.bh);
@@ -423,22 +435,34 @@ class CatPuzzle {
   // ── Tray rendering ───────────────────────────────────────────
   _renderTray() {
     const tray = document.getElementById('tray'); tray.innerHTML = '';
-    const tw = CFG.TRAY_SZ, th = CFG.TRAY_SZ;  // square thumbnails (cats are square)
+    const tw = this.traySz, th = this.traySz; 
+    const dpr = window.devicePixelRatio || 1;
 
     for (const p of this.pieces.filter(x => !x.placed)) {
-      const g = Math.round(CFG.TRAY_SZ * 0.8); // Gutters for large sticker silhouettes
+      const g = Math.round(tw * 0.8); // Gutters for large sticker silhouettes
       const cv = document.createElement('canvas');
-      cv.width = CFG.TRAY_SZ + g; cv.height = CFG.TRAY_SZ + g;
-      this._blitPiece(cv.getContext('2d'), p.col, p.row, g/2, g/2, CFG.TRAY_SZ, CFG.TRAY_SZ, true);
+      
+      const realW = tw + g;
+      const realH = th + g;
+      
+      cv.width = realW * dpr; 
+      cv.height = realH * dpr;
+      cv.style.width = realW + 'px';
+      cv.style.height = realH + 'px';
+      
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      
+      this._blitPiece(ctx, p.col, p.row, g/2, g/2, tw, th, true);
 
       const wrap = document.createElement('div');
       wrap.className = 'piece'; wrap.dataset.pid = p.id;
-      wrap.style.width = cv.width + 'px'; wrap.style.height = cv.height + 'px';
       wrap.appendChild(cv);
       p.el = wrap; tray.appendChild(wrap);
     }
     this._updateCounters();
   }
+
 
   // ── Drag events ──────────────────────────────────────────────
   _bindEvents() {
@@ -465,8 +489,17 @@ class CatPuzzle {
     const gSz = Math.max(this.pw * 2.2, CFG.TRAY_SZ * 1.5);
     const over = gSz * 0.45;
     const gcv = document.createElement('canvas');
-    gcv.width = gcv.height = gSz + over*2;
-    this._blitPiece(gcv.getContext('2d'), p.col, p.row, 0, 0, gSz, gSz, true);
+    const dpr = window.devicePixelRatio || 1;
+    const realSz = gSz + over*2;
+    gcv.width = realSz * dpr;
+    gcv.height = realSz * dpr;
+    gcv.style.width = realSz + 'px';
+    gcv.style.height = realSz + 'px';
+
+    const gctx = gcv.getContext('2d');
+    gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this._blitPiece(gctx, p.col, p.row, 0, 0, gSz, gSz, true);
+
 
     const ghost = document.createElement('div');
     ghost.id = 'ghost'; ghost.style.cssText = `
@@ -545,7 +578,12 @@ class CatPuzzle {
     // Draw into board canvas
     const cv  = document.getElementById('board-cv');
     const ctx = cv.getContext('2d');
+    const dpr = window.devicePixelRatio || 1;
+    ctx.save();
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this._blitPiece(ctx, piece.col, piece.row, piece.col * this.pw, piece.row * this.ph, this.pw, this.ph);
+    ctx.restore();
+
 
     const sl = document.getElementById(`sl-${piece.col}-${piece.row}`);
     if (sl) { sl.classList.add('ok'); sl.classList.remove('slot', 'hl'); }
@@ -755,8 +793,11 @@ class CatPuzzle {
   _vicAnim() {
     const cv  = document.getElementById('vic-cv');
     const ctx = cv.getContext('2d');
-    cv.width  = window.innerWidth;
-    cv.height = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    cv.width  = window.innerWidth * dpr;
+    cv.height = window.innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
 
     const particles = [];
     const COLS = ['#ff6b9d','#ff8fbe','#fce4ec','#f59e0b','#c084fc','#ffd6e7','#ff4081','#fff'];
