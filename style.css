@@ -34,8 +34,9 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
   border-bottom: 1px solid var(--bdr);
   backdrop-filter: blur(16px);
   box-shadow: 0 3px 20px rgba(200,50,120,0.25);
-  min-height: 52px;
+  min-height: 48px;
 }
+
 
 .hdr-left { display: flex; align-items: center; gap: 9px; flex-shrink: 0; }
 .logo { font-size: 1.7rem; animation: hbeat 2s ease-in-out infinite; }
@@ -102,9 +103,11 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
   #board-area {
     flex: 1; min-height: 0;
     display: flex; align-items: center; justify-content: center;
+    padding: 45px 10px 10px 10px; /* Reduced top padding */
   }
   #tray-area {
-    height: 160px; flex-shrink: 0;
+    height: 140px; flex-shrink: 0; /* Slightly smaller tray */
+
     flex-direction: row;
     border-top: 1px solid var(--bdr);
   }
@@ -118,8 +121,9 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
 /* ── Board area ── */
 #board-area {
   display: flex; align-items: center; justify-content: center;
-  padding: 80px 20px 20px 20px;
+  padding: 60px 20px 20px 20px; /* Default desktop padding */
 }
+
 
 #board-wrap {
   position: relative;
