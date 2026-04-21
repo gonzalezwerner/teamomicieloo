@@ -278,8 +278,9 @@ class CatPuzzle {
     const sl = document.getElementById('slots');
     sl.style.cssText = `position:absolute;left:${pad}px;top:${pad}px;width:${this.bw}px;height:${this.bh}px;overflow:hidden;`;
 
-    // Dynamic tray size for mobile - ultra safe height
-    this.traySz = isMobile ? Math.min(62, Math.floor(window.innerHeight * 0.08)) : CFG.TRAY_SZ;
+    // Dynamic tray size for mobile - Reduced for 2-row grid
+    this.traySz = isMobile ? Math.min(45, Math.floor(window.innerHeight * 0.06)) : CFG.TRAY_SZ;
+
 
 
 
