@@ -106,16 +106,19 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
     padding: 45px 10px 10px 10px; /* Reduced top padding */
   }
   #tray-area {
-    height: 190px; flex-shrink: 0; /* Tall enough for pieces */
+    height: 185px; flex-shrink: 0; 
     flex-direction: column;
     border-top: 1px solid var(--bdr);
+    background: rgba(18,4,35,0.95);
   }
-
   #tray {
     flex-wrap: nowrap;
     overflow-x: auto; overflow-y: hidden;
-    padding: 15px 12px; /* Extra padding for shadows */
+    padding: 0 12px; 
+    display: flex;
+    align-items: center; /* Center pieces vertically to avoid bottom clipping */
     -webkit-overflow-scrolling: touch;
+    height: 100%;
   }
 
 }
@@ -196,13 +199,14 @@ html, body { height: 100%; overflow: hidden; background: var(--bg1); }
   box-shadow: -4px 0 24px rgba(0,0,0,.4);
 }
 #tray-hdr {
-  padding: 8px 12px;
+  padding: 4px 10px;
   border-bottom: 1px solid var(--bdr);
   background: rgba(255,107,157,.07);
   display: flex; justify-content: space-between;
-  font-weight: 700; font-size: .82rem; flex-shrink: 0;
+  font-weight: 700; font-size: .65rem; flex-shrink: 0;
 }
-#tray-sub { font-size: .68rem; opacity: .5; font-weight: 400; }
+#tray-sub { font-size: .55rem; opacity: .5; font-weight: 400; }
+
 
 #tray {
   flex: 1; display: flex;
