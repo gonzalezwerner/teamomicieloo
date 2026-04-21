@@ -225,17 +225,21 @@ class CatPuzzle {
     const ah = area.clientHeight;
     const isMobile = window.innerWidth < 640 || window.innerHeight > window.innerWidth;
 
-    // Subtract space for the larger cat tabs
-    const spaceForEars = ah * (isMobile ? 0.12 : 0.18);
-    const aw2 = aw - (isMobile ? 20 : 60);
-    const ah2 = ah - spaceForEars - (isMobile ? 40 : 80); 
+    // Board scaling - Significantly smaller on mobile to leave air around it
+    const spaceForEars = ah * (isMobile ? 0.08 : 0.18);
+    const aw2 = aw * (isMobile ? 0.78 : 0.92);
+    const ah2 = (ah - spaceForEars) * (isMobile ? 0.65 : 0.85); 
     
     const szX = aw2 / this.cols;
     const szY = ah2 / this.rows;
     const sz  = Math.min(szX, szY);
     
-    this.pw = Math.max(10, Math.floor(sz));
-    this.ph = Math.max(10, Math.floor(sz));
+    this.pw = Math.max(8, Math.floor(sz));
+    this.ph = Math.max(8, Math.floor(sz));
+
+
+
+
     this.bw = this.pw * this.cols;
     this.bh = this.ph * this.rows;
 
@@ -260,8 +264,9 @@ class CatPuzzle {
     const sl = document.getElementById('slots');
     sl.style.cssText = `position:absolute;left:${pad}px;top:${pad}px;width:${this.bw}px;height:${this.bh}px;overflow:hidden;`;
 
-    // Dynamic tray size for mobile - more conservative to avoid clipping
-    this.traySz = isMobile ? Math.min(65, Math.floor(window.innerHeight * 0.08)) : CFG.TRAY_SZ;
+    // Dynamic tray size for mobile - ultra safe height
+    this.traySz = isMobile ? Math.min(62, Math.floor(window.innerHeight * 0.08)) : CFG.TRAY_SZ;
+
 
 
     document.getElementById('s-total').textContent = this.total;
@@ -482,8 +487,10 @@ class CatPuzzle {
 
       const wrap = document.createElement('div');
       wrap.className = 'piece'; wrap.dataset.pid = p.id;
+      wrap.style.width = realW + 'px'; wrap.style.height = realH + 'px';
       wrap.appendChild(cv);
       p.el = wrap; tray.appendChild(wrap);
+
     }
     this._updateCounters();
   }
@@ -507,31 +514,35 @@ class CatPuzzle {
     const p = this.pieces.find(x => x.id === pid && !x.placed); if (!p) return;
     e.preventDefault();
     el.setPointerCapture?.(e.pointerId);
+
     const r = el.getBoundingClientRect();
     this._ox = e.clientX - r.left; this._oy = e.clientY - r.top;
 
     // Ghost — larger for visibility
     const gSz = Math.max(this.pw * 2.2, CFG.TRAY_SZ * 1.5);
     const over = gSz * 0.45;
-    const gcv = document.createElement('canvas');
-    const dpr = window.devicePixelRatio || 1;
+    const gcv = p.el.querySelector('canvas').cloneNode(true);
+    const gctx = gcv.getContext('2d');
+    const dpr  = window.devicePixelRatio || 1;
+    
+    // Ensure the clone has high-res support
     const realSz = gSz + over*2;
     gcv.width = realSz * dpr;
     gcv.height = realSz * dpr;
     gcv.style.width = realSz + 'px';
     gcv.style.height = realSz + 'px';
-
-    const gctx = gcv.getContext('2d');
     gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     this._blitPiece(gctx, p.col, p.row, 0, 0, gSz, gSz, true);
+
 
 
     const ghost = document.createElement('div');
     ghost.id = 'ghost'; ghost.style.cssText = `
       position:fixed;z-index:99999;pointer-events:none;
       left:${r.left}px;top:${r.top}px;
-      width:${gcv.width}px;height:${gcv.height}px;
-      transform:scale(1.1);
+      width:${realSz}px;height:${realSz}px;
+      transform:scale(1.15);
+
       filter: drop-shadow(0 20px 50px rgba(0,0,0,0.8));
       opacity:.95;
     `;
